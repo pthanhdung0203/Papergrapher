@@ -80,7 +80,6 @@ pg.toolbar = function() {
 			tool.activateTool();
 			activeTool = tool;
 			jQuery('.tool_'+toolID+'').addClass('active');
-
 		} catch(error) {
 			console.warn('The tool with the id "'+toolID+'" could not be loaded.', error);
 		}

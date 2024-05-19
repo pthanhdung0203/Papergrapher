@@ -1,0 +1,4 @@
+/* Thay đổi con trỏ chuột khi rê vào ô vuông */
+.cursor-change {
+    cursor: url("../assets/rubber.svg"), auto; /* Đường dẫn đến file SVG của bạn */
+}
