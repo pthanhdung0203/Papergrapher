@@ -14,6 +14,7 @@ pg.toolbar = function() {
 		var toolList= pg.tools.getToolList();
 		var $toolsContainer = jQuery('.toolsContainer');
 		
+		// Thêm từng tools vào trong toolbar DOM
 		jQuery.each(toolList, function(index, tool) {
 			if(tool.type == 'hidden') return true;
 			
@@ -51,7 +52,7 @@ pg.toolbar = function() {
 		return previousTool;
 	};
 
-
+	// Thay đổi các tools
 	var switchTool = function(toolID, forced) {
 		try {
 			var opts = pg.tools.getToolInfoByID(toolID);

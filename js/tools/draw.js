@@ -1,146 +1,152 @@
 // drawing tool
 // adapted from resources on http://paperjs.org
 
+// Đăng ký một tool
 pg.tools.registerTool({
-	id: 'draw',
-	name: 'Draw'
+    id: "draw",
+    name: "Draw",
 });
 
-pg.tools.draw = function() {
-	var tool;
-	
-	var options = {
-		pointDistance: 20,
-		drawParallelLines: false,
-		lines: 3,
-		lineDistance: 10,
-		closePath: 'near start',
-		smoothPath : true
-	};
-	
-	var components = {
-		pointDistance: {
-			type: 'int',
-			label: 'Point distance',
-			min: 1
-		},
-		drawParallelLines: {
-			type: 'boolean',
-			label: 'Draw parallel lines'
-		},
-		lines: {
-			type: 'int',
-			label: 'Lines',
-			requirements : {drawParallelLines: true},
-			min: 1
-		},
-		lineDistance: {
-			type: 'float',
-			label: 'Line distance',
-			requirements : {drawParallelLines: true},
-			min: 0
-		},
-		closePath: {
-			type: 'list',
-			label: 'Close path',
-			options: [ 'near start', 'always', 'never' ]
-		},
-		smoothPath: {
-			type: 'boolean',
-			label: 'Smooth path'
-		}
-	};
+pg.tools.draw = function () {
+    var tool;
 
-	var activateTool = function() {
-		var paths = [];
-		
-		// get options from local storage if present
-		options = pg.tools.getLocalOptions(options);
-		
-		tool = new Tool();
-		
-		var lineCount;
+    var options = {
+        pointDistance: 20,
+        drawParallelLines: false,
+        lines: 3,
+        lineDistance: 10,
+        closePath: "near start",
+        smoothPath: true,
+    };
 
-		tool.onMouseDown = function(event) {
-			if(event.event.button > 0) return;  // only first mouse button
-			
-			tool.fixedDistance = options.pointDistance;
+    var components = {
+        pointDistance: {
+            type: "int",
+            label: "Point distance",
+            min: 1,
+        },
+        drawParallelLines: {
+            type: "boolean",
+            label: "Draw parallel lines",
+        },
+        lines: {
+            type: "int",
+            label: "Lines",
+            requirements: { drawParallelLines: true },
+            min: 1,
+        },
+        lineDistance: {
+            type: "float",
+            label: "Line distance",
+            requirements: { drawParallelLines: true },
+            min: 0,
+        },
+        closePath: {
+            type: "list",
+            label: "Close path",
+            options: ["near start", "always", "never"],
+        },
+        smoothPath: {
+            type: "boolean",
+            label: "Smooth path",
+        },
+    };
 
-			if (options.drawParallelLines) {
-				lineCount = options.lines;
-			} else {
-				lineCount = 1;
-			}
-		
-			for( var i=0; i < lineCount; i++) {
-				var path = paths[i];
-				path = new Path();
-				
-				path = pg.stylebar.applyActiveToolbarStyle(path);
-				
-				paths.push(path);
-			}
-		};
+    // Mỗi tools đều có một hàm activateTool để sử dụng, khi active, chúng tạo một đối tượng Tool từ
+    //  paperjs, mỗi đối tượng tool đều có một sự kiện chuột riêng với một tham số là kiểu của đối tượng
+    //  ToolEvent chứa thông tin về sự kiện chuột đó như downpoint (vị trí bấm xuống), point (vị trí)
+    //  delta ?,...
+    var activateTool = function () {
+        var paths = [];
 
-		tool.onMouseDrag = function(event) {
-			if(event.event.button > 0) return;  // only first mouse button
-						
-			var offset = event.delta;
-			offset.angle += 90;
-			for( var i=0; i < lineCount; i++) {
-				var path = paths[i];
-				offset.length = options.lineDistance * i;
-				path.add(event.middlePoint + offset);
-			}
-		};
+        // get options from local storage if present
+        options = pg.tools.getLocalOptions(options);
 
-		tool.onMouseUp = function(event) {
-			if(event.event.button > 0) return;  // only first mouse button
-			//
-			// accidental clicks produce a path but no segments
-			// so return if an accidental click happened
-			if(paths[0].segments.length === 0) return;
-			
-			var group;
-			if(lineCount > 1) {
-				group = new Group();
-			}
-			
-			var nearStart = pg.math.checkPointsClose(paths[0].firstSegment.point, event.point, 30);
-			for( var i=0; i < lineCount; i++) {
-				var path = paths[i];
-				
-				if(options.closePath === 'near start' && nearStart) {
-					path.closePath(true);
-				} else if(options.closePath === 'always') {
-					path.closePath(true);
-				}
-				if(options.smoothPath) path.smooth();
-				
-				if(lineCount > 1) {
-					group.addChild(path);
-				}
-			}
-			
-			paths = [];
-			pg.undo.snapshot('draw');
-			
-		};
-		
-		// setup floating tool options panel in the editor
-		pg.toolOptionPanel.setup(options, components, function() {
-			lineCount = options.lines;
-			tool.fixedDistance = options.pointDistance;
-		});
-		
-		tool.activate();
-		
-	};
+        tool = new Tool();
 
+        var lineCount;
 
-	return {
-		options: options,
-		activateTool:activateTool
-	};
+        tool.onMouseDown = function (event) {
+            if (event.event.button > 0) return; // only first mouse button
 
+            tool.fixedDistance = options.pointDistance;
+
+            // Số lượng dòng vẽ
+            if (options.drawParallelLines) {
+                lineCount = options.lines;
+            } else {
+                lineCount = 1;
+            }
+
+            for (var i = 0; i < lineCount; i++) {
+                var path = paths[i];
+                path = new Path();
+
+                path = pg.stylebar.applyActiveToolbarStyle(path);
+
+                paths.push(path);
+            }
+        };
+
+        tool.onMouseDrag = function (event) {
+            if (event.event.button > 0) return; // only first mouse button
+
+            var offset = event.delta;
+            offset.angle += 90;
+            for (var i = 0; i < lineCount; i++) {
+                var path = paths[i];
+                offset.length = options.lineDistance * i;
+                path.add(event.middlePoint + offset);
+            }
+        };
+
+        tool.onMouseUp = function (event) {
+            if (event.event.button > 0) return; // only first mouse button
+            //
+            // accidental clicks produce a path but no segments
+            // so return if an accidental click happened
+            if (paths[0].segments.length === 0) return;
+
+            var group;
+            if (lineCount > 1) {
+                group = new Group();
+            }
+
+            var nearStart = pg.math.checkPointsClose(
+                paths[0].firstSegment.point,
+                event.point,
+                30
+            );
+            for (var i = 0; i < lineCount; i++) {
+                var path = paths[i];
+
+                if (options.closePath === "near start" && nearStart) {
+                    path.closePath(true);
+                } else if (options.closePath === "always") {
+                    path.closePath(true);
+                }
+                if (options.smoothPath) path.smooth();
+
+                if (lineCount > 1) {
+                    group.addChild(path);
+                }
+            }
+
+            paths = [];
+            pg.undo.snapshot("draw");
+        };
+
+        // setup floating tool options panel in the editor
+        pg.toolOptionPanel.setup(options, components, function () {
+            lineCount = options.lines;
+            tool.fixedDistance = options.pointDistance;
+        });
+
+        tool.activate();
+    };
+
+    return {
+        options: options,
+        activateTool: activateTool,
+    };
 };

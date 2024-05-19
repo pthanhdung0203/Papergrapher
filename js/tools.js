@@ -1,14 +1,15 @@
 // functions related to tools
 
 pg.tools = function() {
+	// Danh sahcs các tool
 	var toolList = [];
 	
-	
+	// Đăng kí tool
 	var registerTool = function(toolInfos) {
 		toolList.push(toolInfos);
 	};
 	
-	
+	// Trả về danh sách các tools
 	var getToolList = function() {
 		return toolList;
 	};

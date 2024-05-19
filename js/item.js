@@ -14,7 +14,11 @@ pg.item = function() {
 		}
 	};
 	
-	
+	// Kiểm tra có phải item hình ảnh
+	var isImageItem = function(item) {
+		return getRootItem(item).data.isImageItem;
+	}
+
 	var isPathItem = function(item) {
 		return item.className === 'Path';
 	};
@@ -77,6 +81,7 @@ pg.item = function() {
 	
 	
 	return {
+		isImageItem: isImageItem,
 		isBoundsItem: isBoundsItem,
 		isPathItem: isPathItem,
 		isCompoundPathItem: isCompoundPathItem,
