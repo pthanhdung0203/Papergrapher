@@ -2,11 +2,12 @@
 .toolOptionPanel {
 	position: absolute;
 	top: 38px;
-	left: 84px;
-	background-color: #fff;
-	padding: 8px 10px 10px 10px;
-	border-radius: 0 0 3px 3px;
+	left: 88px;
+	background-color: #444;
+	padding: 12px;
+	border-radius: 10px;
 	min-width: 90px;
+	color: #eee;
 }
 
 .toolOptionPanel .options {
@@ -34,7 +35,7 @@
 	margin: -7px -10px 6px -10px;
 	padding: 5px 10px;
 	cursor: move;
-	color: #999;
+	color: #eee;
 	display:inline;
 }
 
@@ -113,5 +114,14 @@
 	position: absolute;
 	width: 80px;
 	right: 0;
+	pointer-events: none;
+}
+
+.toolOptionPanel .option-section .imageImportFakeButton {
+	position: absolute;
+	width: 80px;
+	right: 0;
+	white-space: normal;
+	word-wrap: break-word;
 	pointer-events: none;
 }
